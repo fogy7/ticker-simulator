@@ -1,0 +1,73 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>EcoSim - Login</title>
+</head>
+
+<body>
+  <h1>EcoSim</h1>
+
+  <input type="email" id="email" placeholder="Email"><br><br>
+  <input type="password" id="password" placeholder="Senha"><br><br>
+
+  <button onclick="signup()">Cadastrar</button>
+  <button onclick="login()">Login</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+  <script>
+    const supabaseClient = supabase.createClient(
+      "https://gxtdtytivmwkccakuvei.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd4dGR0eXRpdm13a2NjYWt1dmVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTA4MDUsImV4cCI6MjA5MDIyNjgwNX0.n-dsEu90I7lS3pbo7O7AkXOI8LEBKOqUMTpXNZX1jqs"
+    );
+
+    async function signup() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password
+      });
+
+      if (error) {
+        alert("Erro ao cadastrar: " + error.message);
+        return;
+      }
+
+      if (data.user) {
+        await supabaseClient.from('profiles').insert([
+          {
+            id: data.user.id,
+            username: email,
+            balance: 10000
+          }
+        ]);
+      }
+
+      alert("Conta criada!");
+    }
+
+    async function login() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        alert("Erro no login: " + error.message);
+      } else {
+        alert("Login realizado!");
+        // depois a gente redireciona pro dashboard
+        // window.location.href = "dashboard.html";
+      }
+    }
+  </script>
+</body>
+</html>
+```
